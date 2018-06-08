@@ -1,0 +1,66 @@
+densearrays provides support for arrays of numbers or Boolean values in Lua. Arrays using
+densearrays can be faster and more memory-efficient than arrays built from tables.
+
+The function to create an array is "array(type, dim1, dim2...)". "type" is a one-character string
+representing the content type of the array:
+
+	"c": byte
+	"C": unsigned byte
+	"s": short integer
+	"S": unsigned short integer
+	"l": long integer
+	"L": unsigned long integer
+	"f": 32-bit float
+	"d": 64-bit float
+	"n": Lua number
+	"B": boolean value (stored as byte, for speed)
+	"b": boolean value (stored as bit, for memory efficiency)
+
+"dim1", "dim2", and so on are the dimensions of the array. The array can be up to 8-dimensional; if
+you need more dimensions for some fun reason, change the "MAX_DIMS" constant in "array.c".
+
+The return value of "array()" is an array with everything initialized to "0" (or "false"). Some
+useful array methods are:
+
+a:get(coord1, coord2, ...)
+	Returns the value in the array at the given location. Like table-array coordinates, the
+	indices start at 1. If the array type is "b" or "B", the return value will be a Boolean; 
+	otherwise, it will be a number.
+
+a:set(coord1, coord2, ..., value)
+	Inserts a new value in the array at the given location. If the array type is "b", or "B", the
+	new value should be a Boolean; otherwise, it should be a number.
+
+a:clear()
+a:clear(value)
+	Resets the entire array to "0" (or "false") if no value is provided, or to the given value if
+	one is provided.
+
+a:copy()
+	Duplicates the array.
+
+a:bnot()
+	Bitwise-inverses the entire array in place. This is only really meaningful for Boolean arrays,
+	but works for arrays of any data type.
+
+a:bor(b)
+a:band(b)
+a:bxor(b)
+	Computes the bitwise "or", "and", or "xor" of the two arrays and stores the result in "a".
+
+a:negate()
+	Negates the entire array in place. This is only valid for the signed numeric array types.
+
+a:add(b)
+a:multiply(b)
+	Adds or multiplies each element of "b" to the corresponding element of "a".
+
+a:shiftcopy(shift1, shift2, ...)
+	Returns another array of the same size and type, but with all of the elements shifted over by
+	the given amount in each dimension. (I have no idea what this is useful for! I put it in the
+	library for some purpose which I have now forgotten...)
+
+a:getpointer()
+	Returns a userdata pointing to the internal memory storage of the array. The data will be in
+	row-major order. Remember that modifying this buffer will modify the array itself, and if the 
+	array is freed, this buffer will be freed as well.
